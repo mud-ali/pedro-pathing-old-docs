@@ -1,0 +1,6 @@
+[book]
+authors = ["BaronClaps"]
+language = "en"
+multilingual = false
+src = "src"
+title = "Pedro Pathing Documentation"
