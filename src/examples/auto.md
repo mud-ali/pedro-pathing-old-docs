@@ -1,7 +1,7 @@
 # Example Auto
 This is an example auto taken from the [Pedro Pathing Beginner Quickstart](https://github.com/BaronClaps/Pedro-Pathing-Beginner-Quickstart)
 
-It serves as a **template** for a centerstage autonomous, but can be adapted for future seasons.
+It serves as a **template** for a Centerstage autonomous, but can be adapted for future seasons.
 It can also be viewed [here](https://github.com/BaronClaps/Pedro-Pathing-Beginner-Quickstart/blob/master/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/opmode/example/ExampleAuto_Blue.java) on Github
 
 ```java

@@ -42,6 +42,13 @@
 # Examples
 - [Example Auto](./examples/auto.md)
 - [Example Teleop](./examples/teleop.md)
+#
+
+---
+
+# Common Issues
+- [Path Overshoots at the End](./commonissues/pathovershoot.md)
+- [Convert Path(s) to a PathChain](./commonissues/pathtopathchain.md)
 
 # Misc
 - [Resources](./misc/resources.md)
