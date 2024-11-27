@@ -13,6 +13,10 @@ with the localizer that applies to you:
 * If you're using Pinpoint, put `new PinpointLocalizer(hardwareMap)`
 
 ---
+## Robot Coordinate Grid
+Use this diagram to find the offset of your localizer
+[](robotCoord.png)
+
 ## Access
 To start, you'll want to open the file (.java) of your localizer of choice (They are located in the [localization folder](https://github.com/AnyiLin/Pedro-Pathing-Quickstart/tree/master/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/pedroPathing/localization/localizers) within the pedroPathing package) 
 
