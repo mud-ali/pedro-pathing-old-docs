@@ -1,6 +1,5 @@
 # Summary
 [Overview](./overview.md)
-[Resources](./resources.md)
 
 ---
 # Localization
@@ -28,4 +27,6 @@
 #
 
 ---
+# Misc
+[Resources](./resources.md)
 [Contributors](./contributors.md)
