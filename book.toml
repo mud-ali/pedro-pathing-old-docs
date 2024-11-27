@@ -6,7 +6,7 @@ src = "src"
 title = "Pedro Pathing Documentation"
 
 [output.html]
-default-theme = "ayu"
+default-theme = "rust"
 preferred-dark-theme = "ayu"
 git-repository-url = "https://github.com/Pedro-Pathing-Projects/Documentation"
 git-repository-icon = "fa-github"
