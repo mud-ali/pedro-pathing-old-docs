@@ -28,5 +28,5 @@
 
 ---
 # Misc
-[Resources](./resources.md)
-[Contributors](./contributors.md)
+- [Resources](./resources.md)
+- [Contributors](./contributors.md)
