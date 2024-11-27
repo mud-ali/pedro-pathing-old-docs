@@ -44,6 +44,7 @@
 - [Example Teleop](./examples/teleop.md)
 
 # Misc
-- [Resources](./resources.md)
-- [Contributors](./contributors.md)
+- [Resources](./misc/resources.md)
+- [Pedro VS RoadRunner](./misc/pedrovsrr.md)
+- [Contributors](./misc/contributors.md)
 #
