@@ -4,7 +4,7 @@
 somewhat based on Road Runner 0.5.
 It uses a custom algorithm to follow trajectories with speed as a top priority.
 
-Docs: <https://pedropathing.com/>
+Docs: <https://github.com/Pedro-Pathing-Projects/docs>
 
 Quickstart: <https://github.com/AnyiLin/Pedro-Pathing-Quickstart>
 
