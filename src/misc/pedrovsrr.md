@@ -16,7 +16,7 @@ Quickstart: <https://github.com/AnyiLin/Pedro-Pathing-Quickstart>
 
 **Cons of Pedro:**
 
-- Newer, so potentially less stable and/or buggier
+- Newer, so potentially less stable and/or buggier 
 - All the code is in the quickstart instead of in a library, so updating is harder
 - Less people are familiar with it and able to help
 - Not necessarily time consistent
