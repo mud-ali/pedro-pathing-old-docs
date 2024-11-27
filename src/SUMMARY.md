@@ -27,6 +27,23 @@
 #
 
 ---
+
+# PID Tuners
+- [Intro](./pid/intro.md)
+- [Translational](./pid/translational.md)
+- [Heading](./pid/heading.md)
+- [Drive](./pid/drive.md)
+- [Centripetal](./pid/centripetal.md)
+- [Test](./pid/test.md)
+#
+
+---
+
+# Examples
+- [Example Auto](./examples/auto.md)
+- [Example Teleop](./examples/teleop.md)
+
 # Misc
 - [Resources](./resources.md)
 - [Contributors](./contributors.md)
+#
