@@ -13,3 +13,7 @@ Navigate through the sidebar to access detailed pages on localization methods, a
 ---
 
 This website's repository is <https://github.com/Pedro-Pathing-Projects/docs>
+
+---
+
+This website has been created with ❤️ by Baron and Aarsh! 
