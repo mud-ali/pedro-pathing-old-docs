@@ -14,5 +14,14 @@
   - [Pinpoint Localizer](./localization/pinpoint.md) 
   - [Roadrunner 0.5 to Pedro Localizer](./localization/rrToPedro.md)
 
+# Automatic Tuners
+- [Prerequisites](./automatic/prerequisites.md)
+- Velocity Tuners
+  - [Forward](./automatic/forwardvelocity.md)
+  - [Strafe](./automatic/strafevelocity.md)
+- Zero Power Tuners
+  - [Forward](./automatic/forwardzeropower.md)
+  - [Lateral](./automatic/lateralzeropower.md)
+
 ---
 [Contributors](./contributors.md)
