@@ -56,5 +56,4 @@
 # Misc
 - [Resources](./misc/resources.md)
 - [Pedro vs RoadRunner](./misc/pedrovsrr.md)
-- [Contributors](./misc/contributors.md)
 #
