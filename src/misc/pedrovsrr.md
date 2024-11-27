@@ -1,7 +1,7 @@
 # Pedro Pathing vs Road Runner
 
 **Pedro Pathing** is a recently-created library (created early 2024, last updated 10/28/24)
-somewhat based on Road Runner 0.5.
+based on Wolfpack Machina's powerplay autonomous movement.
 It uses a custom algorithm to follow trajectories with speed as a top priority.
 
 Docs: <https://pedro-pathing-projects.github.io/documentation/>
