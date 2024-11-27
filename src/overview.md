@@ -1,14 +1,25 @@
 # Introduction
 
-Pedro Pathing is a Reactive Vector Follower designed by [FTC Team 10158](https://ftcscout.org/teams/10158?season=2023) to improve autonomous navigation. 
+Pedro Pathing is an **advanced Reactive Vector Follower** developed by [FTC Team 10158](https://ftcscout.org/teams/10158?season=2023) to revolutionize autonomous navigation in robotics. Unlike conventional pathing systems such as RoadRunner, Pedro Pathing leverages Bézier curve generation to produce smoother, faster, and more efficient trajectories. Its primary focus is on enhancing the adaptability of robots during autonomous operation by reacting dynamically to environmental changes, reducing error margins, and ensuring optimal path execution. 
 
-It uses Bézier curve generation to ensure smoother, faster, and more efficient pathing compared to traditional systems like RoadRunner.
+By incorporating Bézier curves, the system provides:
+- Smoother Transitions: Ensuring less jerky motions for precision-intensive tasks.
+- Faster Execution: Reducing time spent in path planning and execution.
+- Dynamic Adjustments: Reacting to obstacles or changes in the environment in real-time.
+
+Pedro Pathing is tailored for teams looking to push the boundaries of autonomous efficiency and accuracy. Whether you’re a seasoned team or just getting started with autonomous systems, this documentation will guide you through setting up, tuning, and implementing Pedro Pathing in your projects.
 
 ---
 
-This documentation provides detailed information about setup, localization methods, tuners, and example implementation code for both autonomous and teleop modes.
+This documentation covers a variety of critical topics, such as:
 
-Navigate through the sidebar to access detailed pages on localization methods, automatic tuners, PID tuners, and code examples.
+- **Setup:** Step-by-step instructions to integrate Pedro Pathing into your robot’s codebase.
+- **Localization Methods:** Techniques for precise robot positioning, including odometry and sensor fusion approaches.
+- **Automatic Tuners:** Simplified tuners to help optimize system parameters like PID gains and Bézier control points.
+- **PID Tuning:** Comprehensive strategies for perfecting the reactive follower system.
+- **Code Examples:** Practical examples for both autonomous and teleop modes.
+
+The sidebar provides quick access to each section, ensuring easy navigation through the documentation.
 
 ---
 
@@ -21,7 +32,12 @@ You can reach us at:
 
 ---
 
-If you would like to contribute, please click on the edit button on the top right and then create an issue.
-Please describe your issue thoroughly, and we will get back to you as soon as possible.
+We value community contributions to improve Pedro Pathing. If you have ideas, encounter issues, or wish to enhance this project, we encourage you to contribute:
+
+1.	Click the Edit button at the top-right of the page.
+2.	Submit an issue detailing your suggestion or problem.
+3.	Ensure your issue is thoroughly described, so we can address it effectively.
+
+Our team will review your input and get back to you as quickly as possible.
 
 ---
