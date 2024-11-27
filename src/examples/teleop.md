@@ -1,57 +1,98 @@
-# Setting Up Your OTOS Localizer
+# Example Teleop
+This is an example teleop taken from the [Pedro Pathing Beginner Quickstart](https://github.com/BaronClaps/Pedro-Pathing-Beginner-Quickstart)
 
-## Prerequisites
-* OTOS connected to an I2C port on a hub.
-* Ensure the protective film is removed from the sensor.
+It serves as a **template** for a robot-centric teleop.
+It can also be viewed [here](https://github.com/BaronClaps/Pedro-Pathing-Beginner-Quickstart/blob/master/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/opmode/example/ExampleTeleop_RobotCentric.java) on Github
 
----
+```java
+package org.firstinspires.ftc.teamcode.opmode.example;
 
-## Steps
-### 1. Setup
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-Open the file `OTOSLocalizer.java` and configure the following:
+import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
+import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.MathFunctions;
+import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Vector;
+import org.firstinspires.ftc.teamcode.pedroPathing.follower.Follower;
+import org.firstinspires.ftc.teamcode.config.subsystem.ClawSubsystem;
 
-1. **OTOS Port**: Replace the `deviceName` parameter with the name of the port connected to your OTOS.
-2. **Sensor Position**: Enter the OTOS position relative to the robot's center. Use inches for measurements.
+/**
+ * This is an example teleop that showcases movement and control of three servos and robot-centric driving.
+ *
+ * @author Baron Henderson - 20077 The Indubitables
+ * @version 2.0, 9/8/2024
+ */
 
-### 2. Localizer Tuning
+@TeleOp(name = "Example Robot-Centric Teleop", group = "Examples")
+public class ExampleTeleop_RobotCentric extends OpMode {
+    private Follower follower;
+    private ClawSubsystem claw;
+    private final Pose startPose = new Pose(0,0,0);
 
-#### a) Angular Scalar
+    /** This method is call once when init is played, it initializes the follower and subsystems **/
+    @Override
+    public void init() {
+        follower = new Follower(hardwareMap);
+        follower.setStartingPose(startPose);
 
-1. Position your robot facing a recognizable landmark, such as a field tile edge.
-2. Spin the robot counterclockwise for one full rotation (or a custom angle).
-3. The tuner will display two numbers:
+        claw = new ClawSubsystem(hardwareMap);
+    }
 
-   * First number: Distance the robot thinks it has spun.
-   * Second number (angular scalar): Replace the scalar value on line `78` in the localizer with this value.
+    /** This method is called continuously after Init while waiting to be started. **/
+    @Override
+    public void init_loop() {
+    }
 
-4. (Optional) Run multiple tests and average the scalars for better accuracy.
+    /** This method is called once at the start of the OpMode. **/
+    @Override
+    public void start() {
+    }
 
-#### b) Linear Scalar (Forward or Lateral Tuning)
+    /** This is the main loop of the opmode and runs continuously after play **/
+    @Override
+    public void loop() {
 
-Choose either forward or lateral tuning:
+        /** Movement Sector **/
+        follower.setTeleOpMovementVectors(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, true);
+        follower.update();
 
-* **Forward Tuning**:
-   1. Position a ruler alongside your robot.
-   2. Push the robot forward by 30 inches (default distance).
-   3. The tuner will display the linear scalar: Replace the scalar value on line `77` in the localizer with this value.
+        /** Claw Sector **/
+        if (gamepad1.left_bumper) {
+            claw.closeLClaw();
+        } else {
+            claw.openLClaw();
+        }
 
-* **Lateral Tuning**:
-   1. Position a ruler alongside your robot.
-   2. Push the robot sideways by 30 inches (default distance).
-   3. The tuner will display the linear scalar: Replace the scalar value on line `77` in the localizer with this value.
+        if (gamepad1.right_bumper) {
+            claw.closeRClaw();
+        } else {
+            claw.openRClaw();
+        }
 
-4. (Optional) Run multiple tests and average the scalars for better accuracy.
+        /** This could be paired with a PIDF to set the target position of the lift in teleop.
+         * For this, you would have to update the lift pid and make sure to initialize the lift subsystem.
+         **/
 
----
+        /*
+        if (gamepad1.left_trigger > 0.5) {
+            lift.setTarget(lTarget-50);
+        }
 
-## Testing Your Localizer
+        if (gamepad1.right_trigger > 0.5) {
+            lift.setTarget(lTarget+50);
+        }
+        */
 
-1. Go to Localization Test and drive your robot around.
-2. Open the FTC Dashboard at [http://192.168.43.1:8080/dash](http://192.168.43.1:8080/dash).
-3. Switch the view to "field view" from the top-right corner dropdown.
-4. Observe if the robot's movements appear accurate on the dashboard. Re-run tuning if necessary.
+        telemetry.addData("X", follower.getPose().getX());
+        telemetry.addData("Y", follower.getPose().getY());
+        telemetry.addData("Heading in Degrees", Math.toDegrees(follower.getPose().getHeading()));
+    }
 
----
-
-## Congratulations on successfully tuning your localizer!
+    /** We do not use this because everything automatically should disable **/
+    @Override
+    public void stop() {
+    }
+}
+```
