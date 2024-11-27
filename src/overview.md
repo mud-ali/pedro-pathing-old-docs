@@ -9,3 +9,7 @@ It uses Bezier curve generation to ensure smoother, faster, and more efficient p
 This documentation provides detailed information about setup, localization methods, tuners, and example implementation code for both autonomous and teleop modes.
 
 Navigate through the sidebar to access detailed pages on localization methods, automatic tuners, PID tuners, and code examples.
+
+---
+
+This website's repository is <https://github.com/Pedro-Pathing-Projects/docs>
