@@ -14,7 +14,7 @@
 2. In the **constructor**:
     - Locate the section where the `deviceName` parameter is defined and replace it with the **port name** connected to your OTOS sensor.  
       Example: If your port is labeled `I2C1`, replace the `deviceName` with `"I2C1"`.
-3. Define the **sensor's position** relative to the **center of the robot's wheels**:
+3. Define the **sensor's position** relative to the **center of the robot**:
     - Measure the X, Y coordinates (in inches) and update them in the constructor.
     - Use the comment above the class declaration as guidance for coordinate updates.
 
@@ -24,7 +24,7 @@
 
 #### a) Angular Scalar (Turn Tuning)
 
-1. Place your robot so it faces a fixed, recognizable reference point (e.g., aligning an edge with a field tile).
+1. Place your robot, so it faces a fixed, recognizable reference point (e.g., aligning an edge with a field tile).
 2. Run the **Turn Localizer Tuner**:
     - By default, rotate the robot counterclockwise **one full rotation**.
     - Alternatively, you can set a **custom angle** in the tuner.
@@ -39,7 +39,7 @@
 
 #### b) Linear Scalar (Forward or Lateral Tuning)
 
-Since OTOS has only one linear scalar, you can run **either Forward or Lateral Localizer Tuner**. The result will be the same.
+Since OTOS has only one linear scalar, you can run **either Forward or Lateral Localizer Tuner**. The result should be very similar, but not the same as there will be very small, negligible differences.
 
 ##### **Option 1: Forward Tuning**
 1. Align a ruler alongside your robot.
