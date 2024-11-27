@@ -50,5 +50,9 @@ Our team will review your input and get back to you as quickly as possible.
 
 ---
 
+- Wrote Localization, Automatic, PID, Examples, Misc, and Common Issues sections.
+- Setup mdBook and Github Pages deployments
+
+---
 
 
