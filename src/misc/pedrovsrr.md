@@ -54,3 +54,5 @@ Official Docs: <https://rr.brott.dev/docs/v1-0/installation/>
 - Prioritizes time consistency above all else, meaning potentially worse speed and correction
 - Support for recent sensors like otos and pinpoint is unofficial
   (though still exists, made by j5155)
+
+###### - Written by J5155
