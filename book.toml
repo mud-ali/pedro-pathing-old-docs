@@ -4,3 +4,7 @@ language = "en"
 multilingual = false
 src = "src"
 title = "Pedro Pathing Documentation"
+
+[output.html]
+default-theme = "ayu"
+preferred-dark-theme = "ayu"
