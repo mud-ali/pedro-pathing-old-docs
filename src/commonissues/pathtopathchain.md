@@ -1,6 +1,5 @@
-# Converting a Path into a PathChain
-## Overview 
-
+# Converting a Path into a PathChain ##
+## Overview ##
 In Pedro Pathing, a PathChain allows multiple paths to be chained together, enabling smooth transitions and complex autonomous routines. This guide walks you through converting individual paths into a PathChain while incorporating interpolation methods and timeout constraints.
 
 ---
