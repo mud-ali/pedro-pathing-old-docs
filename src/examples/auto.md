@@ -1,18 +1,16 @@
 # Example Auto
-This is an example auto taken from the [Pedro Pathing Beginner Quickstart](https://github.com/BaronClaps/Pedro-Pathing-Beginner-Quickstart)
+This is an example auto taken from the [Pedro Pathing Beginner Quickstart](https://github.com/Pedro-Pathing-Projects/Beginner-Quickstart)
 
-It serves as a **template** for a Centerstage autonomous, but can be adapted for future seasons.
-It can also be viewed [here](https://github.com/BaronClaps/Pedro-Pathing-Beginner-Quickstart/blob/master/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/opmode/example/ExampleAuto_Blue.java) on Github
+It serves as a **template** for an Into the Deep Bucket Side autonomous, and it scores a neutral preload and then grabs 3 from the spike marks and scores them before parking.
+It can also be viewed [here](https://github.com/Pedro-Pathing-Projects/Beginner-Quickstart/blob/master/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/opmode/example/ExampleBucketAuto.java) on Github
 
 ```java
 package org.firstinspires.ftc.teamcode.opmode.example;
 
 
-import com.qualcomm.hardware.dfrobot.HuskyLens;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import  com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.firstinspires.ftc.robotcore.internal.system.Deadline;
 import org.firstinspires.ftc.teamcode.pedroPathing.follower.*;
 import org.firstinspires.ftc.teamcode.pedroPathing.localization.Pose;
 import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.BezierCurve;
@@ -23,187 +21,238 @@ import org.firstinspires.ftc.teamcode.pedroPathing.pathGeneration.Point;
 import org.firstinspires.ftc.teamcode.pedroPathing.util.Timer;
 import org.firstinspires.ftc.teamcode.config.subsystem.ClawSubsystem;
 
-import java.util.concurrent.TimeUnit;
-
 /**
- * This is an example auto that showcases movement and control of three servos autonomously.
- * It is able to detect the team element using a huskylens and then use that information to go to the correct spike mark and backdrop position.
+ * This is an example auto that showcases movement and control of two servos autonomously.
+ * It is a 0+4 (Specimen + Sample) bucket auto. It scores a neutral preload and then pickups 3 samples from the ground and scores them before parking.
  * There are examples of different ways to build paths.
- * A custom action system have been created that can be based on time, position, or other factors.
+ * A path progression method has been created and can advance based on time, position, or other factors.
  *
  * @author Baron Henderson - 20077 The Indubitables
- * @version 2.0, 9/8/2024
+ * @version 2.0, 11/28/2024
  */
 
 @Autonomous(name = "Example Auto Blue", group = "Examples")
-public class ExampleAuto_Blue extends OpMode {
+public class ExampleBucketAuto extends OpMode {
 
     private Follower follower;
     private Timer pathTimer, actionTimer, opmodeTimer;
-    private int pathState, actionState, clawState;
-    private String navigation;
+
+    /** This is the variable where we store the state of our auto.
+     * It is used by the pathUpdate method. */
+    private int pathState;
+
+    /** This is our claw subsystem.
+     * We call its methods to manipulate the servos that it has within the subsystem. */
     public ClawSubsystem claw;
-    private HuskyLens huskyLens;
 
     /** Create and Define Poses + Paths
      * Poses are built with three constructors: x, y, and heading (in Radians).
      * Pedro uses 0 - 144 for x and y, with 0, 0 being on the bottom left.
-     * (For Centerstage, this would be blue far side/red human player station.)
-     * Even though Pedro uses a different coordinate system than RR, you can convert any roadrunner pose by adding +72 both the x and y. **/
-    //Start Pose
-    private Pose startPose = new Pose(8.5, 84, 0);
-    //Spike mark locations
-    private Pose LeftSpikeMark = new Pose(52, 104, Math.toRadians(270));
-    private Pose MiddleSpikeMark = new Pose(59, 94.5, Math.toRadians(270));
-    private Pose RightSpikeMark = new Pose(52, 82.75, Math.toRadians(270));
-    //Backdrop zone locations
-    private Pose LeftBackdrop = new Pose(44, 121.75, Math.toRadians(270));
-    private Pose MiddleBackdrop = new Pose(49.5, 121.75, Math.toRadians(270));
-    private Pose RightBackdrop = new Pose(58, 121.25, Math.toRadians(270));
-    private Pose WhiteBackdrop = new Pose(40, 122.25, Math.toRadians(270));
+     * (For Into the Deep, this would be Blue Observation Zone (0,0) to Red Observation Zone (144,144).)
+     * Even though Pedro uses a different coordinate system than RR, you can convert any roadrunner pose by adding +72 both the x and y.
+     * This visualizer is very easy to use to find and create paths/pathchains/poses: <https://pedro-path-generator.vercel.app/>
+     * Lets assume our robot is 18 by 18 inches
+     * Lets assume the Robot is facing the human player and we want to score in the bucket */
 
-    // Poses and Paths for Purple and Yellow
-    private Pose spikeMarkGoalPose, initialBackdropGoalPose, firstCycleStackPose, firstCycleBackdropGoalPose, secondCycleStackPose, secondCycleBackdropGoalPose;
-    private Path scoreSpikeMark, initialScoreOnBackdrop, scoreSpikeMarkChosen;
+    /** Start Pose of our robot */
+    private final Pose startPose = new Pose(9, 111, Math.toRadians(270));
 
-    // White Stack Cycle Poses + Path Chains
-    private Pose TopTruss = new Pose(28, 84, Math.toRadians(270));
-    private Pose BottomTruss = new Pose(28, 36, Math.toRadians(270));
-    private Pose Stack = new Pose(46, 11.5, Math.toRadians(270));
-    private PathChain cycleStackTo, cycleStackBack, cycleStackToBezier;
+    /** Scoring Pose of our robot. It is facing the submersible at a -45 degree (315 degree) angle. */
+    private final Pose scorePose = new Pose(14, 129, Math.toRadians(315));
 
-    /** Generate Spike Mark and Backdrop Paths based off of the team element location **/
-    public void setBackdropGoalPose() {
-        switch (navigation) {
-            default:
-            case "left":
-                spikeMarkGoalPose = new Pose(LeftSpikeMark.getX(), LeftSpikeMark.getY(), Math.toRadians(270));
-                initialBackdropGoalPose = new Pose(LeftBackdrop.getX(), LeftBackdrop.getY(), Math.toRadians(270));
-                firstCycleBackdropGoalPose = new Pose(WhiteBackdrop.getX(), WhiteBackdrop.getY(), Math.toRadians(270));
-                scoreSpikeMarkChosen = new Path(new BezierCurve(new Point(startPose), new Point(8.5, 80.5, Point.CARTESIAN), new Point(48, 135, Point.CARTESIAN), new Point(LeftSpikeMark)));
-                break;
-            case "middle":
-                spikeMarkGoalPose = new Pose(MiddleSpikeMark.getX(), MiddleSpikeMark.getY() + 3, Math.toRadians(270));
-                initialBackdropGoalPose = new Pose(MiddleBackdrop.getX(), MiddleBackdrop.getY(), Math.toRadians(270));
-                firstCycleBackdropGoalPose = new Pose(MiddleBackdrop.getX(), MiddleBackdrop.getY(), Math.toRadians(270));
-                scoreSpikeMarkChosen = new Path(new BezierCurve(new Point(startPose), new Point(8.5, 12 + 72 + 5, Point.CARTESIAN), new Point(-30 + 72 + 15, 22 + 67.5 + 20 + 5, Point.CARTESIAN), new Point(MiddleSpikeMark)));
-                break;
-            case "right":
-                spikeMarkGoalPose = new Pose(RightSpikeMark.getX(), RightSpikeMark.getY(), Math.toRadians(270));
-                initialBackdropGoalPose = new Pose(RightBackdrop.getX(), RightBackdrop.getY(), Math.toRadians(270));
-                firstCycleBackdropGoalPose = new Pose(RightBackdrop.getX(), RightBackdrop.getY(), Math.toRadians(270));
-                scoreSpikeMarkChosen = new Path(new BezierCurve(new Point(startPose), new Point(8.5, 12 + 72 + 5, Point.CARTESIAN), new Point(-36 + 72 + 16, 80 + 17 + 4, Point.CARTESIAN), new Point(RightSpikeMark)));
-                break;
-        }
-    }
+    /** Lowest (First) Sample from the Spike Mark */
+    private final Pose pickup1Pose = new Pose(37, 121, Math.toRadians(0));
+
+    /** Middle (Second) Sample from the Spike Mark */
+    private final Pose pickup2Pose = new Pose(43, 130, Math.toRadians(0));
+
+    /** Highest (Third) Sample from the Spike Mark */
+    private final Pose pickup3Pose = new Pose(49, 135, Math.toRadians(0));
+
+    /** Park Pose for our robot, after we do all of the scoring. */
+    private final Pose parkPose = new Pose(60, 98, Math.toRadians(90));
+
+    /** Park Control Pose for our robot, this is used to manipulate the bezier curve that we will create for the parking.
+     * The Robot will not go to this pose, it is used a control point for our bezier curve. */
+    private final Pose parkControlPose = new Pose(60, 98, Math.toRadians(90));
+
+    /* These are our Paths and PathChains that we will define in buildPaths() */
+    private Path scorePreload, park;
+    private PathChain grabPickup1, grabPickup2, grabPickup3, scorePickup1, scorePickup2, scorePickup3;
 
     /** Build the paths for the auto (adds, for example, constant/linear headings while doing paths)
      * It is necessary to do this so that all the paths are built before the auto starts. **/
     public void buildPaths() {
-        scoreSpikeMark = scoreSpikeMarkChosen;
-        scoreSpikeMark.setLinearHeadingInterpolation(startPose.getHeading(), spikeMarkGoalPose.getHeading());
-        scoreSpikeMark.setPathEndTimeoutConstraint(0);
 
-        /** There are two major types of paths components: BezierCurves and BezierLines.
-         *    * BezierCurves are curved, and require > 3 points. There are the start and end points, and the control points.
+        /* There are two major types of paths components: BezierCurves and BezierLines.
+         *    * BezierCurves are curved, and require >= 3 points. There are the start and end points, and the control points.
          *    - Control points manipulate the curve between the start and end points.
-         *    - A good visualizer for this is [this](https://www.desmos.com/calculator/3so1zx0hcd).
-         *    * BezierLines are straight, and require 2 points. There are the start and end points. **/
+         *    - A good visualizer for this is [this](https://pedro-path-generator.vercel.app/).
+         *    * BezierLines are straight, and require 2 points. There are the start and end points.
+         * Paths have can have heading interpolation: Constant, Linear, or Tangential
+         *    * Linear heading interpolation:
+         *    - Pedro will slowly change the heading of the robot from the startHeading to the endHeading over the course of the entire path.
+         *    * Constant Heading Interpolation:
+         *    - Pedro will maintain one heading throughout the entire path.
+         *    * Tangential Heading Interpolation:
+         *    - Pedro will follows the angle of the path such that the robot is always driving forward when it follows the path.
+         * PathChains hold Path(s) within it and are able to hold their end point, meaning that they will holdPoint until another path is followed.
+         * Here is a explanation of the difference between Paths and PathChains <https://pedropathing.com/commonissues/pathtopathchain.html> */
 
-        initialScoreOnBackdrop = new Path(new BezierLine(new Point(spikeMarkGoalPose), new Point(initialBackdropGoalPose)));
-        initialScoreOnBackdrop.setLinearHeadingInterpolation(spikeMarkGoalPose.getHeading(), initialBackdropGoalPose.getHeading());
-        initialScoreOnBackdrop.setPathEndTimeoutConstraint(0);
+        /* This is our scorePreload path. We are using a BezierLine, which is a straight line. */
+        scorePreload = new Path(new BezierLine(new Point(startPose), new Point(scorePose)));
+        scorePreload.setLinearHeadingInterpolation(startPose.getHeading(), scorePose.getHeading());
 
-        /** This is a path chain, defined on line 66
-         * It, well, chains multiple paths together. Here we use a constant heading from the board to the stack.
-         * On line 97, we set the Linear Interpolation,
-         * which means that Pedro will slowly change the heading of the robot from the startHeading to the endHeading over the course of the entire path */
+        /* Here is an example for Constant Interpolation
+        scorePreload.setConstantInterpolation(startPose.getHeading()); */
 
-        cycleStackTo = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(initialBackdropGoalPose), new Point(TopTruss)))
-                .setConstantHeadingInterpolation(firstCycleBackdropGoalPose.getHeading())
-                .addPath(new BezierLine(new Point(TopTruss), new Point(BottomTruss)))
-                .setConstantHeadingInterpolation(firstCycleBackdropGoalPose.getHeading())
-                .addPath(new BezierCurve(new Point(BottomTruss), new Point(12 + 13 + 1, 12, Point.CARTESIAN), new Point(31 + 12 + 1, 36, Point.CARTESIAN), new Point(Stack)))
-                .setConstantHeadingInterpolation(firstCycleBackdropGoalPose.getHeading())
-                .setPathEndTimeoutConstraint(0)
+        /* This is our grabPickup1 PathChain. We are using a single path with a BezierLine, which is a straight line. */
+        grabPickup1 = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(scorePose), new Point(pickup1Pose)))
+                .setLinearHeadingInterpolation(scorePose.getHeading(), pickup1Pose.getHeading())
                 .build();
 
-        cycleStackBack = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(Stack), new Point(BottomTruss)))
-                .setConstantHeadingInterpolation(WhiteBackdrop.getHeading())
-                .addPath(new BezierLine(new Point(BottomTruss), new Point(TopTruss)))
-                .setConstantHeadingInterpolation(WhiteBackdrop.getHeading())
-                .addPath(new BezierLine(new Point(TopTruss), new Point(WhiteBackdrop)))
-                .setConstantHeadingInterpolation(WhiteBackdrop.getHeading())
-                .setPathEndTimeoutConstraint(0)
+        /* This is our scorePickup1 PathChain. We are using a single path with a BezierLine, which is a straight line. */
+        scorePickup2 = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(pickup2Pose), new Point(scorePose)))
+                .setLinearHeadingInterpolation(pickup2Pose.getHeading(), scorePose.getHeading())
                 .build();
 
-        cycleStackToBezier = follower.pathBuilder()
-                .addPath(new BezierCurve(new Point(initialBackdropGoalPose), new Point(30 + 14, 91.6, Point.CARTESIAN), new Point(13 + 14, 130.8, Point.CARTESIAN), new Point(BottomTruss)))
-                .setConstantHeadingInterpolation(WhiteBackdrop.getHeading())
-                .addPath(new BezierCurve(new Point(BottomTruss), new Point(20.5 + 14, 10, Point.CARTESIAN), new Point(42 + 14, 35, Point.CARTESIAN), new Point(Stack)))
-                .setConstantHeadingInterpolation(WhiteBackdrop.getHeading())
-                .setPathEndTimeoutConstraint(0)
+        /* This is our grabPickup2 PathChain. We are using a single path with a BezierLine, which is a straight line. */
+        grabPickup2 = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(scorePose), new Point(pickup2Pose)))
+                .setLinearHeadingInterpolation(scorePose.getHeading(), pickup2Pose.getHeading())
                 .build();
+
+        /* This is our scorePickup2 PathChain. We are using a single path with a BezierLine, which is a straight line. */
+        scorePickup2 = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(pickup3Pose), new Point(scorePose)))
+                .setLinearHeadingInterpolation(pickup3Pose.getHeading(), scorePose.getHeading())
+                .build();
+
+        /* This is our grabPickup3 PathChain. We are using a single path with a BezierLine, which is a straight line. */
+        grabPickup3 = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(scorePose), new Point(pickup3Pose)))
+                .setLinearHeadingInterpolation(scorePose.getHeading(), pickup3Pose.getHeading())
+                .build();
+
+        /* This is our scorePickup3 PathChain. We are using a single path with a BezierLine, which is a straight line. */
+        scorePickup3 = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(pickup3Pose), new Point(scorePose)))
+                .setLinearHeadingInterpolation(pickup3Pose.getHeading(), scorePose.getHeading())
+                .build();
+
+        /* This is our park path. We are using a BezierCurve with 3 points, which is a curved line that is curved based off of the control point */
+        park = new Path(new BezierCurve(new Point(scorePose), /* Control Point */ new Point(parkControlPose), new Point(parkPose)));
+        park.setLinearHeadingInterpolation(scorePose.getHeading(), parkPose.getHeading());
     }
 
     /** This switch is called continuously and runs the pathing, at certain points, it triggers the action state.
-     * Everytime the switch changes case, it will reset the timer. (This is because of the setPathState() function on line 193)
-     * The followPath() function sets the follower to run the specific path, but does NOT wait for it to finish before moving on. **/
+     * Everytime the switch changes case, it will reset the timer. (This is because of the setPathState() method)
+     * The followPath() function sets the follower to run the specific path, but does NOT wait for it to finish before moving on. */
     public void autonomousPathUpdate() {
         switch (pathState) {
-            case 10:
-                follower.followPath(scoreSpikeMark);
-                setPathState(11);
-                break;
-            case 11:
-                if (pathTimer.getElapsedTimeSeconds() > 2.6) {
-                    claw.openLClaw();
-                    setPathState(12);
-                }
-                break;
-            case 12:
-                if (follower.getPose().getY() > 120) {
-                    setActionState(1);
-                    follower.followPath(initialScoreOnBackdrop);
-                    setPathState(13);
-                }
-                break;
-        }
-    }
-
-    /** This switch is called continuously and runs the necessary actions, when finished, it will set the state to -1.
-     * (Therefore, it will not run the action continuously) **/
-    public void autonomousActionUpdate() {
-        switch (actionState) {
             case 0:
-                setClawState(0);
-                setActionState(-1);
+                follower.followPath(scorePreload);
+                setPathState(1);
                 break;
             case 1:
-                setClawState(1);
-                setActionState(-1);
+
+                /* You could check for
+                - Follower State: "if(!follower.isBusy() {}" (Though, I don't recommend this because it might not return due to holdEnd
+                - Time: "if(pathTimer.getElapsedTimeSeconds() > 1) {}"
+                - Robot Position: "if(follower.getPose().getX() > 36) {}"
+                */
+
+                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
+                if(follower.getPose().getX() > (scorePose.getX() - 1) && follower.getPose().getY() > (scorePose.getY() - 1)) {
+                    /* Score Preload */
+                    claw.scoringClaw();
+                    claw.openClaw();
+                    /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
+                    follower.followPath(grabPickup1, /* holdEnd = */ true);
+                    setPathState(2);
+                }
                 break;
+            case 2:
+                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup1Pose's position */
+                if(follower.getPose().getX() > (pickup1Pose.getX() - 1) && follower.getPose().getY() > (pickup1Pose.getY() - 1)) {
+                    /* Grab Sample */
+                    claw.groundClaw();
+                    claw.closeClaw();
+                    /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
+                    follower.followPath(scorePickup1, /* holdEnd = */ true);
+                    setPathState(3);
+                }
+                break;
+            case 3:
+                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
+                if(follower.getPose().getX() > (scorePose.getX() - 1) && follower.getPose().getY() > (scorePose.getY() - 1)) {
+                    /* Score Sample */
+                    claw.scoringClaw();
+                    claw.openClaw();
+                    /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
+                    follower.followPath(grabPickup2, /* holdEnd = */ true);
+                    setPathState(4);
+                }
+                break;
+            case 4:
+                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup2Pose's position */
+                if(follower.getPose().getX() > (pickup2Pose.getX() - 1) && follower.getPose().getY() > (pickup2Pose.getY() - 1)) {
+                    /* Grab Sample */
+                    claw.groundClaw();
+                    claw.closeClaw();
+                    /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
+                    follower.followPath(scorePickup2, /* holdEnd = */ true);
+                    setPathState(5);
+                }
+                break;
+            case 5:
+                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
+                if(follower.getPose().getX() > (scorePose.getX() - 1) && follower.getPose().getY() > (scorePose.getY() - 1)) {
+                    /* Score Sample */
+                    claw.scoringClaw();
+                    claw.openClaw();
+                    /* Since this is a pathChain, we can have Pedro hold the end point while we are grabbing the sample */
+                    follower.followPath(grabPickup3, /* holdEnd = */ true);
+                    setPathState(6);
+                }
+                break;
+            case 6:
+                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the pickup3Pose's position */
+                if(follower.getPose().getX() > (pickup3Pose.getX() - 1) && follower.getPose().getY() > (pickup3Pose.getY() - 1)) {
+                    /* Grab Sample */
+                    claw.groundClaw();
+                    claw.closeClaw();
+                    /* Since this is a pathChain, we can have Pedro hold the end point while we are scoring the sample */
+                    follower.followPath(scorePickup3, /* holdEnd = */ true);
+                    setPathState(7);
+                }
+                break;
+            case 7:
+                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
+                if(follower.getPose().getX() > (scorePose.getX() - 1) && follower.getPose().getY() > (scorePose.getY() - 1)) {
+                    /* Score Sample */
+                    claw.scoringClaw();
+                    claw.openClaw();
+                    /* Since this is a pathChain, we can have Pedro hold the end point while we are parked */
+                    follower.followPath(park, /* holdEnd = */ true);
+                    setPathState(8);
+                }
+                break;
+            case 8:
+                /* This case checks the robot's position and will wait until the robot position is close (1 inch away) from the scorePose's position */
+                if(follower.getPose().getX() > (parkPose.getX() - 1) && follower.getPose().getY() > (parkPose.getY() - 1)) {
+                    /* Put the claw in position to get a level 1 ascent */
+                    claw.startClaw();
+                    claw.closeClaw();
+
+                    /* Set the state to a Case we won't use or define, so it just stops running an new paths */
+                    setPathState(-1);
+                }
+            break;
         }
     }
-
-    /** This switch is called continuously and runs the claw actions, when finished, it will set the state to -1.
-     * (Therefore, it will not run the action continuously) **/
-    public void clawUpdate() {
-        switch (clawState) {
-            case 0:
-                claw.groundClaw();
-                claw.closeClaws();
-                setClawState(-1);
-                break;
-            case 1:
-                claw.scoringClaw();
-                setClawState(-1);
-                break;
-        }
-    }
-
 
     /** These change the states of the paths and actions
      * It will also reset the timers of the individual switches **/
@@ -212,32 +261,13 @@ public class ExampleAuto_Blue extends OpMode {
         pathTimer.resetTimer();
     }
 
-    public void setActionState(int aState) {
-        actionState = aState;
-        pathTimer.resetTimer();
-    }
-
-    public void setClawState(int cState) {
-        clawState = cState;
-    }
-
     /** This is the main loop of the OpMode, it will run repeatedly after clicking "Play". **/
     @Override
     public void loop() {
 
-        // These loop the actions and movement of the robot
+        // These loop the movements of the robot
         follower.update();
         autonomousPathUpdate();
-        autonomousActionUpdate();
-        clawUpdate();
-
-        //Huskylens Setup
-        Deadline rateLimit = new Deadline(1, TimeUnit.SECONDS);
-        rateLimit.expire();
-        if (!huskyLens.knock()) {
-            telemetry.addData(">>", "Problem communicating with " + huskyLens.getDeviceName());
-        }
-        huskyLens.selectAlgorithm(HuskyLens.Algorithm.COLOR_RECOGNITION);
 
         // Feedback to Driver Hub
         telemetry.addData("path state", pathState);
@@ -251,7 +281,6 @@ public class ExampleAuto_Blue extends OpMode {
     @Override
     public void init() {
         pathTimer = new Timer();
-        actionTimer = new Timer();
         opmodeTimer = new Timer();
 
         opmodeTimer.resetTimer();
@@ -259,49 +288,25 @@ public class ExampleAuto_Blue extends OpMode {
         follower = new Follower(hardwareMap);
         follower.setStartingPose(startPose);
 
+        buildPaths();
+
         claw = new ClawSubsystem(hardwareMap);
 
-        huskyLens = hardwareMap.get(HuskyLens.class, "huskyLens");
-
-        claw.closeClaws();
+        // Set the claw to positions for init
+        claw.closeClaw();
         claw.startClaw();
     }
 
     /** This method is called continuously after Init while waiting for "play". **/
     @Override
-    public void init_loop() {
-
-        // Scanning for Team Element
-        HuskyLens.Block[] blocks = huskyLens.blocks();
-        for (int i = 0; i < blocks.length; i++) {
-            //----------------------------1----------------------------\\
-            if (blocks[i].x <= 100 && blocks[i].id == 2) {
-                navigation = "left";
-            }
-            if (blocks[i].x > 100 && blocks[i].x <= 270 && blocks[i].id == 2) {
-                navigation = "middle";
-            }
-            if (blocks[i].x > 270 && blocks[i].id == 2) {
-                navigation = "right";
-            }
-        }
-
-        // After 4 Seconds, Robot Initialization is complete
-        if (opmodeTimer.getElapsedTimeSeconds() > 4) {
-            telemetry.addData("Init", "Finished");
-        }
-    }
+    public void init_loop() {}
 
     /** This method is called once at the start of the OpMode.
      * It runs all the setup actions, including building paths and starting the path system **/
     @Override
     public void start() {
-        claw.closeClaws();
-        setBackdropGoalPose();
-        buildPaths();
         opmodeTimer.resetTimer();
-        setPathState(10);
-        setActionState(0);
+        setPathState(0);
     }
 
     /** We do not use this because everything should automatically disable **/
