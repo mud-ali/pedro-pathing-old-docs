@@ -18,7 +18,7 @@ Open the file `TwoWheelLocalizer.java` and configure the following:
 Ensure the following:
 
 * The forward encoder ticks up when the robot moves forward.
-* The strafe encoder ticks up when the robot moves to the right.
+* The strafe encoder ticks up when the robot moves to the left.
 
 ### 3. Localizer Tuning
 

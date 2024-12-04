@@ -20,7 +20,7 @@ Open the file `ThreeWheelIMULocalizer.java` and configure the following:
 Ensure the following:
 
 * Forward encoder ticks up when the robot moves forward.
-* Strafe encoder ticks up when the robot moves to the right.
+* Strafe encoder ticks up when the robot moves to the left.
 
 ### 3. Localizer Tuning
 
