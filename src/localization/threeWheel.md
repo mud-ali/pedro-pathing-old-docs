@@ -36,7 +36,7 @@ Ensure the following:
 #### b) Forward Localizer Tuner
 
 1. Position a ruler alongside your robot.
-2. Push the robot forward by 30 inches (default distance).
+2. Push the robot forward by 48 inches (default distance).
 3. The tuner will display two numbers:
 
    * First number: Distance the robot thinks it has traveled.
@@ -47,7 +47,7 @@ Ensure the following:
 #### c) Lateral Localizer Tuner
 
 1. Position a ruler alongside your robot.
-2. Push the robot sideways (strafing) by 30 inches (default distance).
+2. Push the robot sideways (strafing) by 48 inches (default distance).
 3. The tuner will display two numbers:
 
    * First number: Distance the robot thinks it has traveled laterally.

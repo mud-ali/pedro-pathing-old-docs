@@ -5,6 +5,7 @@
 ### These are the current localizers supported:
 - Drive Encoder Localizer 
 - Two-Wheel Localizer
+- Two-Wheel + Pinpoint IMU Localizer
 - Three-Wheel Localizer
 - Three-Wheel + IMU Localizer
 - OTOS Localizer

@@ -1,17 +1,17 @@
-# Setting Up Your Two Wheel Localizer
+# Setting Up Your Two Wheel + Pinpoint IMU Localizer
 
 ## Prerequisites
-* A Control Hub with a working IMU.
+* A GoBilda Pinpoint Odometry Computer with ONLY an i2c cord to the `i2c` port. We will not use the `x` or `y` ports.
 * Two odometry wheels connected to motor encoder ports on a hub.
 
 ---
 ## Steps
 ### 1. Odometry Wheel Setup
-Open the file `TwoWheelLocalizer.java` and configure the following:
+Open the file `TwoWheelPinpointIMULocalizer.java` and configure the following:
 
 1. **Tracking Wheel Positions**: Enter the positions of your tracking wheels relative to the robot's center. Use inches for measurements.
 2. **Encoder Ports**: Replace the `deviceName` parameters with the names of the ports connected to your encoders.
-3. **IMU Orientation**: Adjust the IMU's orientation to match your robot.
+3. **IMU Orientation**: Make sure that the Pinpoint has the ports facing up and the GoBilda logo at the front of the Pinpoint.
 
 ### 2. Encoder Direction Calibration
 
@@ -28,8 +28,8 @@ Ensure the following:
 2. Push the robot forward by 48 inches (default distance).
 3. The tuner will display two numbers:
 
-   * First number: Distance the robot thinks it has traveled.
-   * Second number (multiplier): Replace `FORWARD_TICKS_TO_INCHES` in the localizer with this value.
+    * First number: Distance the robot thinks it has traveled.
+    * Second number (multiplier): Replace `FORWARD_TICKS_TO_INCHES` in the localizer with this value.
 
 4. (Optional) Run multiple tests and average the multipliers for better accuracy.
 
@@ -39,8 +39,8 @@ Ensure the following:
 2. Push the robot sideways (strafing) by 48 inches (default distance).
 3. The tuner will display two numbers:
 
-   * First number: Distance the robot thinks it has traveled laterally.
-   * Second number (multiplier): Replace `STRAFE_TICKS_TO_INCHES` in the localizer with this value.
+    * First number: Distance the robot thinks it has traveled laterally.
+    * Second number (multiplier): Replace `STRAFE_TICKS_TO_INCHES` in the localizer with this value.
 
 4. (Optional) Run multiple tests and average the multipliers for better accuracy.
 

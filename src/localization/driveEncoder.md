@@ -35,7 +35,7 @@ We need to adjust multipliers that convert encoder ticks into real-world measure
 
 1. Position a ruler alongside your robot.
 
-2. Push the robot forward by the desired distance (default is 30 inches).
+2. Push the robot forward by the desired distance (default is 48 inches).
 
 3. The tuner will display two numbers:
 
@@ -49,7 +49,7 @@ We need to adjust multipliers that convert encoder ticks into real-world measure
 
 1. Position a ruler alongside your robot.
 
-2. Push the robot sideways (strafing) by the desired distance (default is 30 inches).
+2. Push the robot sideways (strafing) by the desired distance (default is 48 inches).
 
 3. The tuner will display two numbers:
 

@@ -43,14 +43,14 @@ Since OTOS has only one linear scalar, you can run **either Forward or Lateral L
 
 ##### **Option 1: Forward Tuning**
 1. Align a ruler alongside your robot.
-2. Push the robot forward by the default distance (**30 inches**) or a custom set value.
+2. Push the robot forward by the default distance (**48 inches**) or a custom set value.
 3. Observe the tuner outputs:
     - **First number**: The distance the robot estimates it has moved.
     - **Second number**: The **linear scalar** to update.
 
 ##### **Option 2: Lateral Tuning**
 1. Align a ruler alongside your robot.
-2. Push the robot **30 inches laterally to the right** (default distance) or a custom set value.
+2. Push the robot **48 inches laterally to the right** (default distance) or a custom set value.
 3. Observe the tuner outputs:
     - **First number**: The distance the robot estimates it has moved.
     - **Second number**: The **linear scalar** to update.

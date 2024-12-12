@@ -42,12 +42,12 @@ Ensure the following:
 
 2. Forward Tuning:
    * Position a ruler alongside your robot.
-   * Push the robot forward by 30 inches (default distance).
+   * Push the robot forward by 48 inches (default distance).
    * The tuner will display the forward multiplier: Replace `FORWARD_TICKS_TO_INCHES` in the localizer with this value.
 
 3. Lateral Tuning:
    * Position a ruler alongside your robot.
-   * Push the robot sideways (strafing) by 30 inches (default distance).
+   * Push the robot sideways (strafing) by 48 inches (default distance).
    * The tuner will display the lateral multiplier: Replace `STRAFE_TICKS_TO_INCHES` in the localizer with this value.
 
 4. (Optional) Run multiple tests and average the multipliers for better accuracy.

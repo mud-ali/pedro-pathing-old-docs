@@ -6,6 +6,7 @@ Go to line `70` in the `PoseUpdater` class, and replace the `new ThreeWheelLocal
 with the localizer that applies to you:
 * If you're using drive encoders, put `new DriveEncoderLocalizer(hardwareMap)`
 * If you're using two wheel odometry, put `new TwoWheelLocalizer(hardwareMap)`
+* If you're using two wheel odometry + pinpoint imu, put `new TwoWheelPinpointIMULocalizer(hardwareMap)`
 * If you're using three wheel odometry, put `new ThreeWheelLocalizer(hardwareMap)`, so basically
   don't change it from the default
 * If you're using three wheel odometry with the IMU, put `new ThreeWheelIMULocalizer(hardwareMap)`
@@ -23,6 +24,7 @@ To start, you'll want to open the file (.java) of your localizer of choice (They
 From there, continue the steps for your localizer in the linked pages:
 - [Drive Encoder Localizer](driveEncoder.md)
 - [Two Wheel Localizer](twoWheel.md)
+- [TwoWheel + Pinpoint IMU Localizer](twoWheelPinpointImu.md)
 - [Three Wheel Localizer](threeWheel.md)
 - [Three Wheel + IMU Localizer](threeWheelImu.md)
 - [OTOS Localizer](otos.md)
